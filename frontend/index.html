@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/vuex@3.0.0"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff4d4d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/assets/icon.png">
+
+    <title>Crav</title>
+
+    <style>
+        /* PWA Install Modal Style */
+        #pwa-install-modal {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            text-align: center;
+        }
+
+        #pwa-install-modal h4 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        #pwa-install-modal p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        #pwa-install-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #pwa-close-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <!-- PWA Install Modal UI -->
+    <div id="pwa-install-modal">
+        <img src="/assets/icon.png" alt="Crav Icon" style="width: 60px; border-radius: 12px; margin-bottom: 10px;">
+        <h4>Install Crav App</h4>
+        <p>Install our app on your home screen for a better experience and easy access!</p>
+        <button id="pwa-install-btn">Install Now</button>
+        <button id="pwa-close-btn">Not now</button>
+    </div>
+
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => {
+                        console.log('SW Registered!', reg);
+                        // Check for updates to the service worker
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New content is available; please refresh.');
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
+        // PWA Install Prompt Logic
+        let deferredPrompt;
+        const installModal = document.getElementById('pwa-install-modal');
+        const installBtn = document.getElementById('pwa-install-btn');
+        const closeBtn = document.getElementById('pwa-close-btn');
+
+        // Check if app is already "installed" or in standalone mode
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+
+            // Show the modal if not in standalone and not dismissed in this session
+            if (!isStandalone && !sessionStorage.getItem('pwa-prompt-dismissed')) {
+                showInstallModal();
+            }
+        });
+
+        function showInstallModal() {
+            // Smoothly show the modal
+            installModal.style.display = 'block';
+            installModal.style.opacity = '0';
+            installModal.style.transition = 'opacity 0.5s ease-in-out';
+            setTimeout(() => {
+                installModal.style.opacity = '1';
+            }, 100);
+        }
+
+        // Auto-show logic for the prompt if it's "delayed" or if user wants it always
+        // We wait a few seconds after load to not overwhelm the user immediately
+        window.addEventListener('load', () => {
+            if (!isStandalone && !sessionStorage.getItem('pwa-prompt-dismissed')) {
+                setTimeout(() => {
+                    // Only show if we haven't shown it yet
+                    if (installModal.style.display !== 'block') {
+                        // For iOS or browsers that don't support beforeinstallprompt, 
+                        // we can still show our custom manual "how to install" or just the nudge.
+                        showInstallModal();
+                    }
+                }, 5000); // 5 second delay
+            }
+        });
+
+        installBtn.addEventListener('click', (e) => {
+            if (deferredPrompt) {
+                // hide our install UI
+                installModal.style.display = 'none';
+                // Show the prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                        sessionStorage.setItem('pwa-prompt-dismissed', 'true');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Fallback for iOS or if prompt isn't available yet
+                alert('To install Crav: \n1. Open in Safari \n2. Tap the Share button \n3. Select "Add to Home Screen"');
+                installModal.style.display = 'none';
+                sessionStorage.setItem('pwa-prompt-dismissed', 'true');
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            installModal.style.display = 'none';
+            // Don't show again in this session
+            sessionStorage.setItem('pwa-prompt-dismissed', 'true');
+        });
+
+        // Check if already installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('Crav was installed.');
+            installModal.style.display = 'none';
+        });
+
+        if (isStandalone) {
+            console.log('App is already running in standalone mode');
+        }
+    </script>
+
+    <!-- Load all JavaScript files as modules in correct order -->
+    <script type="module">
+        // Import utility files first
+        import '/utils/store.js';
+        import '/utils/apiService.js';
+        import '/utils/router.js';
+
+        // Import components
+        import '/components/Navbar.js';
+        import '/components/RestaurantCard.js';
+        import '/components/MenuItem.js';
+        import '/components/CartItem.js';
+        import '/components/ReviewForm.js';
+
+        // Import customer pages
+        import '/pages/customer/CustomerHomePage.js';
+        import '/pages/customer/CustomerLoginPage.js';
+        import '/pages/customer/CustomerRegisterPage.js';
+        import '/pages/customer/CustomerRestaurantDetailPage.js';
+        import '/pages/customer/CustomerCartPage.js';
+        import '/pages/customer/CustomerCheckOutPage.js';
+        import '/pages/customer/CustomerOrderHistoryPage.js';
+        import '/pages/customer/CustomerOrderDetailPage.js';
+        import '/pages/customer/CustomerProfilePage.js';
+        import '/pages/customer/CustomerFavoritesPage.js';
+        import '/pages/customer/CustomerRewardsPage.js';
+
+        // Import restaurant pages
+        import '/pages/restaurant/RestaurantLoginPage.js';
+        import '/pages/restaurant/RestaurantRegisterPage.js';
+        import '/pages/restaurant/RestaurantDashboardPage.js';
+        import '/pages/restaurant/RestaurantMenuManagementPage.js';
+        import '/pages/restaurant/RestaurantOrderQueuePage.js';
+        import '/pages/restaurant/RestaurantProfileManagementPage.js';
+        import '/pages/restaurant/RestaurantPromotionsPage.js';
+        import '/pages/restaurant/RestaurantAnalyticsPage.js';
+        import '/pages/restaurant/RestaurantTimeSlotManagementPage.js';
+
+        // Import admin pages
+        import '/pages/admin/AdminLoginPage.js';
+        import '/pages/admin/AdminDashboardPage.js';
+        import '/pages/admin/AdminRestaurantManagementPage.js';
+        import '/pages/admin/AdminUserManagementPage.js';
+        import '/pages/admin/AdminOrderManagementPage.js';
+        import '/pages/admin/AdminCouponManagementPage.js';
+        import '/pages/admin/AdminReviewManagementPage.js';
+        import '/pages/admin/AdminReportsPage.js';
+
+        // Import and initialize main app
+        import '/app.js';
+    </script>
+
+    <!-- bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

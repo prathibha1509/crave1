@@ -1,0 +1,497 @@
+/* --- VIBRANT & WARM UI OVERHAUL --- */
+/* A redesign focused on warmth, depth, and energy, inspired by the Bengaluru vibe. */
+
+/* --- 1. Root Variables & Base Styles --- */
+:root {
+    --brand-primary: #FF7043;
+    /* Appetizing orange */
+    --brand-accent: #00BFA6;
+    /* Vibrant mint green */
+    --text-primary: #1F2937;
+    /* Darker gray for better contrast */
+    --text-secondary: #6B7280;
+    --surface-color: #FFFFFF;
+    --background-color: #FFFBF8;
+    --border-color: #F3F4F6;
+    /* Lighter border for subtlety */
+    --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 25px 50px rgba(0, 0, 0, 0.07);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+section {
+    padding: 6rem 0;
+}
+
+/* --- 2. Modern Navbar (Glassmorphism) & Dropdown Fix --- */
+.navbar.sticky-top {
+    background-color: rgba(255, 251, 248, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--brand-primary) !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+/* ✅ START: DROPDOWN MENU FIX */
+.dropdown-menu {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
+}
+
+.dropdown-item {
+    color: var(--text-primary) !important;
+    /* Ensures text is always visible */
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: var(--brand-primary) !important;
+    background-color: var(--background-color);
+}
+
+/* ✅ END: DROPDOWN MENU FIX */
+
+
+/* --- 3. Upgraded Buttons --- */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 12px 28px;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+/* This is a button, not a dropdown menu itself */
+.btn.dropdown-toggle {
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-brand {
+    background: linear-gradient(to right, #FF8A65, #FF7043);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 112, 67, 0.2);
+}
+
+.btn-brand:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(255, 112, 67, 0.3);
+}
+
+.btn-outline-brand {
+    color: var(--brand-primary);
+    border: 2px solid var(--brand-primary);
+    background: transparent;
+}
+
+.btn-outline-brand:hover,
+.btn-outline-brand.active {
+    color: white;
+    background-color: var(--brand-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 112, 67, 0.2);
+}
+
+/* --- 4. Refined Cards --- */
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+    background-color: var(--surface-color);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* --- 5. Specific Component Styling --- */
+
+/* Hero Section */
+.hero-section {
+    background-image: radial-gradient(circle at 50% 50%, #fffbf8, #fff7f2);
+}
+
+.hero-title {
+    font-size: 3.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.text-brand {
+    color: var(--brand-primary) !important;
+}
+
+/* Restaurant & Menu Cards */
+.restaurant-card .card-img-top,
+.menu-card .card-img-top {
+    height: 220px;
+    object-fit: cover;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.card-text {
+    color: var(--text-secondary);
+}
+
+/* Login/Register & Form Controls */
+.login-container {
+    padding: 4rem 0;
+}
+
+.login-card,
+.profile-card {
+    max-width: 450px;
+    margin: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 1rem 1rem;
+    /* Adjusted padding for better vertical alignment */
+    background-color: #F9FAFB;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    height: auto;
+    /* ✅ FIX: Explicitly set text color for all form controls */
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 4px rgba(255, 112, 67, 0.2);
+    border-color: var(--brand-primary);
+    background-color: var(--surface-color);
+}
+
+/* ✅ FIX: Custom styling for <select> elements */
+select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+
+
+/* Order Summary & Detail Cards */
+.order-summary-card {
+    background-color: #FFF3E0;
+    border: 1px solid #FFE0B2;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.completed {
+    background-color: #DCFCE7;
+    color: #166534;
+}
+
+.status-badge.preparing,
+.status-badge.placed,
+.status-badge.ready {
+    background-color: #FEF9C3;
+    color: #854D0E;
+}
+
+.status-badge.cancelled,
+.status-badge.rejected {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.status-badge.refunded {
+    background-color: #374151;
+    color: #F9FAFB;
+}
+
+/* Admin & Restaurant Portal */
+.admin-container {
+    padding: 2rem;
+    background-color: #F9FAFB;
+}
+
+.admin-page-title {
+    font-weight: 700;
+}
+
+.card-header.bg-white {
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.table>tbody>tr>td {
+    color: var(--text-secondary);
+}
+
+.table>thead>tr>th {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #F9FAFB;
+}
+
+.stat-card:hover {
+    border-color: var(--brand-primary);
+}
+
+.stat-number {
+    color: var(--brand-primary);
+}
+
+/* Restaurant Order Queue */
+.order-column {
+    background-color: #F9FAFB;
+    border-radius: 12px;
+    padding: 20px;
+    height: 100%;
+}
+
+.order-card {
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--brand-primary);
+    margin-bottom: 1rem;
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Time Slot Management */
+.list-group-item {
+    border-color: var(--border-color);
+}
+
+/* --- 6. Star Rating Component --- */
+.star-rating {
+    display: inline-block;
+}
+
+.star {
+    font-size: 2.5rem;
+    /* Make the stars bigger */
+    color: #d3d3d3;
+    /* Default color for an empty star (light gray) */
+    cursor: pointer;
+    /* Show a hand cursor on hover */
+    transition: color 0.2s;
+    /* Smooth color transition */
+    padding: 0 5px;
+    /* Add some space between stars */
+}
+
+.star:hover {
+    color: #ffc107;
+    /* Gold color on hover */
+}
+
+.star.filled {
+    color: #ffc107;
+    /* Gold color for a selected (filled) star */
+}
+
+/* --- 7. Google Sign-In & Separator --- */
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #999;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.separator:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.separator:not(:empty)::after {
+    margin-left: .5em;
+}
+
+/* --- 8. Pickup / Dine-in Switcher (Restored Logic Style) --- */
+.mode-switcher {
+    background: #eee;
+    border-radius: 50px;
+    padding: 2px;
+    display: inline-flex;
+    position: relative;
+}
+
+.mode-btn {
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    z-index: 1;
+    border: none;
+    background: transparent;
+    transition: color 0.3s;
+}
+
+.mode-btn.active {
+    color: white;
+}
+
+.mode-indicator {
+    position: absolute;
+    height: calc(100% - 4px);
+    background: var(--brand-primary);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+/* --- 9. PWA Install Modal (Restored) --- */
+#pwa-install-modal {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    border: 1px solid var(--brand-primary);
+}
+
+/* --- ✅ NEW: MOTION GRAPHICS & HERO ANIMATIONS --- */
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(3deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes float-reversed {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(15px) rotate(-5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0;
+    background: linear-gradient(135deg, #FFF8F3 0%, #FFF 100%);
+}
+
+.floating-hero {
+    animation: float 6s ease-in-out infinite;
+    z-index: 2;
+    position: relative;
+}
+
+.hero-image-container {
+    position: relative;
+}
+
+.hero-image-shadow {
+    position: absolute;
+    bottom: -20px;
+    left: 10%;
+    width: 80%;
+    height: 40px;
+    background: rgba(0,0,0,0.1);
+    filter: blur(20px);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.motion-graphics {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.floating-icon {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.icon-1 { top: 10%; right: 10%; animation: float 5s ease-in-out infinite; }
+.icon-2 { bottom: 20%; left: -5%; animation: float-reversed 7s ease-in-out infinite; }
+.icon-3 { top: 40%; right: -5%; animation: float 8s ease-in-out infinite; }
+
+.hero-content-box {
+    position: relative;
+    z-index: 3;
+}
+
+.btn-brand:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(230, 81, 0, 0.3);
+}
+
+.btn-outline-brand {
+    color: var(--brand-color);
+    border: 2px solid var(--brand-color);
+    background: transparent;
+    font-weight: 600;
+}
+
+.btn-outline-brand:hover {
+    background: var(--brand-color);
+    color: white;
+}
+/* --- ✅ END: MOTION GRAPHICS --- */

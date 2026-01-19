@@ -1,0 +1,23 @@
+{
+    "name": "Crav - Food Delivery",
+    "short_name": "Crav",
+    "description": "Order delicious food from your favorite restaurants.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ff4d4d",
+    "icons": [
+        {
+            "src": "/assets/icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/assets/icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
